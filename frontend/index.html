@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management System</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background-color: #f4f6f9;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎓 Student Management System</h1>
+
+    <h2>Add Student</h2>
+
+    <form id="studentForm">
+        <input type="text" id="name" placeholder="Student Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <button type="submit">Add Student</button>
+    </form>
+
+    <h2>Student List</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="studentTable">
+        </tbody>
+    </table>
+
+<script>
+
+const API_URL = "http://127.0.0.1:8000";
+
+// Load Students
+async function loadStudents() {
+    const response = await fetch(`${API_URL}/students`);
+    const students = await response.json();
+
+    const table = document.getElementById("studentTable");
+    table.innerHTML = "";
+
+    students.forEach(student => {
+        table.innerHTML += `
+            <tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${student.email}</td>
+            </tr>
+        `;
+    });
+}
+
+// Add Student
+document.getElementById("studentForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+
+    await fetch(`${API_URL}/students`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, email })
+    });
+
+    document.getElementById("studentForm").reset();
+    loadStudents();
+});
+
+// Load on page start
+loadStudents();
+
+</script>
+
+</body>
+</html>
